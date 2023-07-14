@@ -32,7 +32,10 @@ class _SignUpFormState extends State<SignUpForm> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => VerificationScreen(username: username),
+              builder: (context) => VerificationScreen(
+                username: username,
+                password: password,
+              ),
             ),
           );
         }

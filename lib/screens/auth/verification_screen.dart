@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:chat/constants.dart';
 import 'package:chat/providers/user_provider.dart';
 import 'package:chat/screens/messages/message_screen.dart';
@@ -8,10 +9,12 @@ import 'package:provider/provider.dart';
 import 'components/logo_with_title.dart';
 
 class VerificationScreen extends StatefulWidget {
-  const VerificationScreen({Key? key, required this.username})
+  const VerificationScreen(
+      {Key? key, required this.username, required this.password})
       : super(key: key);
 
   final String username;
+  final String password;
 
   @override
   _VerificationScreenState createState() => _VerificationScreenState();
@@ -20,6 +23,25 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   late String _otpCode;
+
+  void signIn({required String username, required String password}) async {
+    final signInResponse = await context
+        .read<UserProvider>()
+        .signIn(username: username, password: password);
+
+    signInResponse.fold(
+      (error) => context.showError(error),
+      (signInResult) {
+        if (signInResult.nextStep.signInStep == AuthSignInStep.done) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MessagesScreen()),
+              (route) => false);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,18 +66,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                final result = await context
-                    .read<UserProvider>()
-                    .confirmSignUp(username: widget.username, code: _otpCode);
+                final result = await context.read<UserProvider>().confirmSignUp(
+                    username: widget.username,
+                    code: _otpCode,
+                    password: widget.password);
                 result.fold(
                   (error) => context.showError(error),
-                  (_) => Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MessagesScreen(),
-                    ),
-                    (route) => false,
-                  ),
+                  (_) => signIn(
+                      username: widget.username, password: widget.password),
                 );
               }
             },

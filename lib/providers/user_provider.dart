@@ -27,7 +27,9 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<Either<String, bool>> confirmSignUp(
-      {required String username, required String code}) async {
+      {required String username,
+      required String code,
+      required password}) async {
     _setIsLoading(true);
     final response =
         await _userRepository.confirmSignUp(username: username, code: code);
