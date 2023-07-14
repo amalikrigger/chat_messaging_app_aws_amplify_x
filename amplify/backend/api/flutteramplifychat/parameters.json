@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "flutteramplifychat",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authflutteramplifychat2af3047d",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2023-07-13T17:24:38.301Z"
+}
