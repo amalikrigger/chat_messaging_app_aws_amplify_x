@@ -22,35 +22,22 @@ class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   late String _username, _email, _password;
 
-  @override
-  void initState() {
-    _username = "";
-    _email = "";
-    _password = "";
-    super.initState();
-  }
-
   void signUp(String username, String password, String email) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      final signUpResult =
-          await context.read<UserProvider>().signUp(username, password, email);
-      signUpResult.fold(
-        (error) => context.showError(error),
-        (step) {
-          if (step.nextStep.signUpStep == AuthSignUpStep.confirmSignUp) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VerificationScreen(
-                  username: username,
-                ),
-              ),
-            );
-          }
-        },
-      );
-    }
+    final signUpResult =
+        await context.read<UserProvider>().signUp(username, password, email);
+    signUpResult.fold(
+      (error) => context.showError(error),
+      (step) {
+        if (step.nextStep.signUpStep == AuthSignUpStep.confirmSignUp) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerificationScreen(username: username),
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -92,12 +79,13 @@ class _SignUpFormState extends State<SignUpForm> {
             padding: const EdgeInsets.symmetric(vertical: defaultPadding),
             child: ElevatedButton(
               onPressed: () {
-                signUp(_username, _password, _email);
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  signUp(_username, _password, _email);
+                }
               },
               child: context.watch<UserProvider>().isLoading
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
+                  ? const CircularProgressIndicator(color: Colors.white)
                   : const Text("Sign Up"),
             ),
           ),
