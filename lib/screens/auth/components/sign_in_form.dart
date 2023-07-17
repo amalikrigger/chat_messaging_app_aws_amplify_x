@@ -32,7 +32,9 @@ class _SignInFormState extends State<SignInForm> {
         if (signInResult.nextStep.signInStep == AuthSignInStep.done) {
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const MessagesScreen()),
+              MaterialPageRoute(
+                builder: (context) => const MessagesScreen(),
+              ),
               (route) => false);
         }
       },

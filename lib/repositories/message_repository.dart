@@ -37,7 +37,7 @@ class MessageRepository {
 
   Future<Either<String, List<Message>>> getLatestMessages() async {
     const graphQLDocument = '''query GetLatestMessages {
-            messagesByDate(type: "Message" sortDirection: DESC limit: 4) {
+            messagesByDate(type: "Message" sortDirection: DESC limit: 20) {
               items {
                 id
                 message
